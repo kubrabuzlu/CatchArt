@@ -11,7 +11,7 @@ def train_step(model: torch.nn.Module,
                dataloader: torch.utils.data.DataLoader,
                loss_fn: torch.nn.Module,
                optimizer: torch.optim.Optimizer,
-               device: torch.device) -> Tuple[float, float, float]:
+               device: str) -> Tuple[float, float, float]:
     """
     Performs a single training step over the entire dataloader.
 
@@ -112,9 +112,9 @@ def train(model: torch.nn.Module,
           epochs: int,
           device: torch.device,
           checkpoint_path: str,
-          log_wandb: bool=False,
-          early_stopping_patience: int=5,
-          scheduler_patience: int=3) -> Dict[str, List]:
+          early_stopping_patience: int,
+          scheduler_patience: int,
+          log_wandb: bool = False) -> Dict[str, List]:
     """
     Trains and evaluates the model over multiple epochs.
 
@@ -127,9 +127,9 @@ def train(model: torch.nn.Module,
         epochs (int): Number of training epochs.
         device (torch.device): Device to train the model on (CPU or CUDA).
         checkpoint_path (str): File path to save the best model.
-        log_wandb (bool): Specifies whether Wandb will be used.
         early_stopping_patience (int): Number of steps to wait for early stopping.
         scheduler_patience (int): Number of steps to wait for reduce learning rate.
+        log_wandb (bool): Specifies whether Wandb will be used.
 
     Returns:
         Dict[str, List]: A dictionary containing lists of loss and accuracy for both training and test sets.
