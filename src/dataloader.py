@@ -1,20 +1,23 @@
-import os
-import configparser
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader, random_split
 import torch
+from torchvision import datasets, transforms
+from torchvision.transforms import Compose
+from torch.utils.data import DataLoader, random_split
 
-def load_config(config_path="config.ini"):
-    """
-    Load configuration parameters from the specified .ini file.
-    """
-    config = configparser.ConfigParser()
-    config.read(config_path)
-    return config
+from typing import Tuple
 
-def get_transforms(img_size):
+
+def get_transforms(img_size: Tuple) -> Tuple[Compose, Compose]:
     """
-    Returns data augmentation transforms for training and basic transforms for validation.
+        Returns the image transformations for training and validation datasets.
+
+        Args:
+            img_size (Tuple): The target size to which images will be resized.
+                            Example: (224, 224).
+
+        Returns:
+            Tuple[Compose, Compose]:
+                - train_transforms: Data augmentation pipeline for training set.
+                - val_transforms: Basic preprocessing for validation set.
     """
     train_transforms = transforms.Compose([
         transforms.Resize(img_size),
@@ -31,17 +34,31 @@ def get_transforms(img_size):
 
     return train_transforms, val_transforms
 
-def prepare_dataloaders(config_path="config.ini"):
-    """
-    Prepare PyTorch DataLoaders for training and validation using configuration file parameters.
-    """
-    config = load_config(config_path)
-    data_path = config["data"]["data_path"]
-    batch_size = int(config["model_parameters"]["batch_size"])
-    img_size = (int(config["model_parameters"]["img_width"]), int(config["DATA"]["img_height"]))
-    val_split = float(config["model_parameters"]["validation_split"])
-    seed = int(config["model_parameters"]["random_seed"])
 
+def prepare_dataloaders( data_path: str,
+                         batch_size: int,
+                         img_size: Tuple,
+                         valid_split: float,
+                         seed: int) -> Tuple[DataLoader, DataLoader]:
+    """
+    Prepares PyTorch DataLoaders for training and validation using an image folder dataset.
+
+    This function reads the dataset from a given directory where subfolders represent class labels,
+    applies appropriate transformations to training and validation splits, and returns DataLoaders.
+
+    Args:
+        data_path (str): Path to the root directory containing image folders.
+                         Each subfolder represents a class.
+        batch_size (int): Number of samples per batch to load.
+        img_size (Tuple): Image resize size (e.g., (224,224)).
+        valid_split (float): Fraction of dataset to reserve for validation (e.g., 0.2 for 20%).
+        seed (int): Random seed for reproducible data splitting.
+
+    Returns:
+        Tuple[DataLoader, DataLoader]:
+            - train_loader: DataLoader for the training dataset.
+            - val_loader: DataLoader for the validation dataset.
+    """
     # Load transforms
     train_transforms, val_transforms = get_transforms(img_size)
 
@@ -50,7 +67,7 @@ def prepare_dataloaders(config_path="config.ini"):
 
     # Split dataset into training and validation sets
     total_size = len(full_dataset)
-    val_size = int(val_split * total_size)
+    val_size = int(valid_split * total_size)
     train_size = total_size - val_size
 
     train_dataset, val_dataset = random_split(
