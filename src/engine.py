@@ -20,7 +20,7 @@ def train_step(model: torch.nn.Module,
         dataloader (torch.utils.data.DataLoader): DataLoader containing the training data.
         loss_fn (torch.nn.Module): Loss function to evaluate predictions.
         optimizer (torch.optim.Optimizer): Optimizer to update model parameters.
-        device (torch.device): Device to perform training on (CPU or CUDA).
+        device (str): Device to perform training on (CPU or CUDA).
 
     Returns:
         Tuple[float, float]: Average training loss and accuracy for the epoch.
@@ -63,7 +63,7 @@ def train_step(model: torch.nn.Module,
 def test_step(model: torch.nn.Module,
               dataloader: torch.utils.data.DataLoader,
               loss_fn: torch.nn.Module,
-              device: torch.device) -> Tuple[float, float, float]:
+              device: str) -> Tuple[float, float, float]:
     """
     Evaluates the model on a given test/validation dataset.
 
@@ -71,7 +71,7 @@ def test_step(model: torch.nn.Module,
         model (torch.nn.Module): The PyTorch model to be evaluated.
         dataloader (torch.utils.data.DataLoader): DataLoader for the test/validation data.
         loss_fn (torch.nn.Module): Loss function to evaluate predictions.
-        device (torch.device): Device to perform evaluation on (CPU or CUDA).
+        device (str): Device to perform evaluation on (CPU or CUDA).
 
     Returns:
         Tuple[float, float]: Average test loss and accuracy.
@@ -110,7 +110,7 @@ def train(model: torch.nn.Module,
           optimizer: torch.optim.Optimizer,
           loss_fn: torch.nn.Module,
           epochs: int,
-          device: torch.device,
+          device: str,
           checkpoint_path: str,
           early_stopping_patience: int,
           scheduler_patience: int,
@@ -125,7 +125,7 @@ def train(model: torch.nn.Module,
         optimizer (torch.optim.Optimizer): Optimizer used for parameter updates.
         loss_fn (torch.nn.Module): Loss function to calculate model error.
         epochs (int): Number of training epochs.
-        device (torch.device): Device to train the model on (CPU or CUDA).
+        device (str): Device to train the model on (CPU or CUDA).
         checkpoint_path (str): File path to save the best model.
         early_stopping_patience (int): Number of steps to wait for early stopping.
         scheduler_patience (int): Number of steps to wait for reduce learning rate.
