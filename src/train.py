@@ -1,8 +1,10 @@
 import os
-import torch
 import wandb
 import configparser
+import torch
 from torchvision import transforms
+from pathlib import Path
+
 from dataloader import prepare_dataloaders
 from model import create_resnet50_painter_model
 from engine import train
@@ -29,12 +31,12 @@ wandb_name = config["WANDB"]["RUN_NAME"]
 
 # -------------------- GENERAL SETTINGS -------------------- #
 num_epochs = int(config["MODEL_PARAMETERS"]["NUM_EPOCHS"])
-batch_size = int(config["MODEL_PARAMETERS"]["BATCH_SIZE"])
+batch_size = int(config["IMG_PARAMETERS"]["BATCH_SIZE"])
 learning_rate = float(config["MODEL_PARAMETERS"]["LEARNING_RATE"])
 img_size = (int(config["IMG_PARAMETERS"]["IMG_WIDTH"]), int(config["IMG_PARAMETERS"]["IMG_HEIGHT"]))
-model_save_path = config["OUTPUT"]["MODEL_SAVE_PATH"]
-early_stopping_patience = int(config["OUTPUT"]["EARLY_STOPPING_PATIENCE"])
-schedular_patience = int(config["OUTPUT"]["SCHEDULAR_PATIENCE"])
+model_save_path = Path(config["OUTPUT"]["MODEL_SAVE_PATH"])
+early_stopping_patience = int(config["MODEL_PARAMETERS"]["EARLY_STOPPING_PATIENCE"])
+schedular_patience = int(config["MODEL_PARAMETERS"]["SCHEDULAR_PATIENCE"])
 
 # -------------------- SET SEED -------------------- #
 seed = int(config["RANDOM"]["RANDOM_SEED"])
@@ -44,7 +46,7 @@ set_seed(seed)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # -------------------- DATA -------------------- #
-data_dir = config["DATA"]["DATA_DIR"]
+data_dir = Path(config["DATA"]["DATA_DIR"])
 valid_split = float(config["DATA"]["DATA_VALID_SPLIT"])
 
 # Image transforms
