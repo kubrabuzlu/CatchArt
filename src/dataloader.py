@@ -3,7 +3,7 @@ from torchvision import datasets, transforms
 from torchvision.transforms import Compose
 from torch.utils.data import DataLoader, random_split
 
-from typing import Tuple
+from typing import Tuple, List
 
 
 def get_transforms(img_size: Tuple) -> Tuple[Compose, Compose]:
@@ -35,11 +35,11 @@ def get_transforms(img_size: Tuple) -> Tuple[Compose, Compose]:
     return train_transforms, val_transforms
 
 
-def prepare_dataloaders( data_path: str,
-                         batch_size: int,
-                         img_size: Tuple,
-                         valid_split: float,
-                         seed: int) -> Tuple[DataLoader, DataLoader]:
+def prepare_dataloaders(data_path: str,
+                        batch_size: int,
+                        img_size: Tuple,
+                        valid_split: float,
+                        seed: int) -> Tuple[DataLoader, DataLoader, List[str]]:
     """
     Prepares PyTorch DataLoaders for training and validation using an image folder dataset.
 
@@ -58,12 +58,14 @@ def prepare_dataloaders( data_path: str,
         Tuple[DataLoader, DataLoader]:
             - train_loader: DataLoader for the training dataset.
             - val_loader: DataLoader for the validation dataset.
+            - class_names: List of class names inferred from folder structure.
     """
     # Load transforms
     train_transforms, val_transforms = get_transforms(img_size)
 
     # Load the entire dataset (labels inferred from folder names)
     full_dataset = datasets.ImageFolder(root=data_path, transform=None)
+    class_names = full_dataset.classes
 
     # Split dataset into training and validation sets
     total_size = len(full_dataset)
@@ -84,4 +86,4 @@ def prepare_dataloaders( data_path: str,
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-    return train_loader, val_loader
+    return train_loader, val_loader, class_names
