@@ -135,7 +135,7 @@ def train(model: torch.nn.Module,
         Dict[str, List]: A dictionary containing lists of loss and accuracy for both training and test sets.
     """
 
-    best_loss = 0
+    best_loss = float('inf')
     patience_counter = 0
     results = {"train_loss": [],
                "train_acc": [],
@@ -189,7 +189,7 @@ def train(model: torch.nn.Module,
         if test_loss < best_loss:
             best_loss = test_loss
             patience_counter = 0
-            save_model(model.state_dict(), checkpoint_path)
+            save_model(model, checkpoint_path)
             print(f"Best model saved at epoch {epoch + 1} with loss: {best_loss:.4f}")
         else:
             patience_counter += 1
