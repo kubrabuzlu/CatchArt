@@ -5,6 +5,7 @@ from sklearn.metrics import f1_score
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 from utils import save_model
+from pathlib import Path
 
 
 def train_step(model: torch.nn.Module,
@@ -111,7 +112,7 @@ def train(model: torch.nn.Module,
           loss_fn: torch.nn.Module,
           epochs: int,
           device: str,
-          checkpoint_path: str,
+          checkpoint_path: Path,
           early_stopping_patience: int,
           scheduler_patience: int,
           log_wandb: bool = False) -> Dict[str, List]:
@@ -126,7 +127,7 @@ def train(model: torch.nn.Module,
         loss_fn (torch.nn.Module): Loss function to calculate model error.
         epochs (int): Number of training epochs.
         device (str): Device to train the model on (CPU or CUDA).
-        checkpoint_path (str): File path to save the best model.
+        checkpoint_path (Path): File path to save the best model.
         early_stopping_patience (int): Number of steps to wait for early stopping.
         scheduler_patience (int): Number of steps to wait for reduce learning rate.
         log_wandb (bool): Specifies whether Wandb will be used.
