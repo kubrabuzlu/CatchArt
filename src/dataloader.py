@@ -4,6 +4,7 @@ from torchvision.transforms import Compose
 from torch.utils.data import DataLoader, random_split
 
 from typing import Tuple, List
+from pathlib import Path
 
 
 def get_transforms(img_size: Tuple) -> Tuple[Compose, Compose]:
@@ -35,7 +36,7 @@ def get_transforms(img_size: Tuple) -> Tuple[Compose, Compose]:
     return train_transforms, val_transforms
 
 
-def prepare_dataloaders(data_path: str,
+def prepare_dataloaders(data_path: Path,
                         batch_size: int,
                         img_size: Tuple,
                         valid_split: float,
@@ -47,7 +48,7 @@ def prepare_dataloaders(data_path: str,
     applies appropriate transformations to training and validation splits, and returns DataLoaders.
 
     Args:
-        data_path (str): Path to the root directory containing image folders.
+        data_path (Path): Path to the root directory containing image folders.
                          Each subfolder represents a class.
         batch_size (int): Number of samples per batch to load.
         img_size (Tuple): Image resize size (e.g., (224,224)).
@@ -64,7 +65,7 @@ def prepare_dataloaders(data_path: str,
     train_transforms, val_transforms = get_transforms(img_size)
 
     # Load the entire dataset (labels inferred from folder names)
-    full_dataset = datasets.ImageFolder(root=data_path, transform=None)
+    full_dataset = datasets.ImageFolder(root=str(data_path.resolve()), transform=None)
     class_names = full_dataset.classes
 
     # Split dataset into training and validation sets
