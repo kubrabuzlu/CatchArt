@@ -13,7 +13,7 @@ from evaluate import evaluate_and_log
 from dotenv import load_dotenv
 from set_seed import set_seed
 
-# ------------- LOAD ENVIRONMENT -------------
+# ------------- LOAD ENVIRONMENT ------------- #
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 # -------------------- CONFIGURATION -------------------- #
@@ -21,7 +21,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-# ------------- W&B Setup -------------
+# ------------- W&B Setup ------------- #
 if config["WANDB"]["WANDB_MODE"] == "offline":
     os.environ["WANDB_MODE"] = "offline"
 else:
@@ -69,7 +69,7 @@ train_dataloader, test_dataloader, class_names = prepare_dataloaders(data_path=d
 
 # -------------------- MODEL -------------------- #
 model = create_painter_model(model_name=model_name,
-                                      num_classes=len(class_names)).to(device)
+                             num_classes=len(class_names)).to(device)
 
 # -------------------- OPTIMIZER & LOSS -------------------- #
 loss_fn = torch.nn.CrossEntropyLoss()
