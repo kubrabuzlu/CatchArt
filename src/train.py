@@ -4,10 +4,12 @@ import configparser
 import torch
 from torchvision import transforms
 from pathlib import Path
+from distutils.util import strtobool
 
 from dataloader import prepare_dataloaders
-from model import create_resnet50_painter_model
+from model import create_painter_model
 from engine import train
+from evaluate import evaluate_and_log
 from dotenv import load_dotenv
 from set_seed import set_seed
 
@@ -30,6 +32,9 @@ wandb_name = config["WANDB"]["RUN_NAME"]
 
 
 # -------------------- GENERAL SETTINGS -------------------- #
+model_name = config["MODEL_PARAMETERS"]["MODEL_NAME"]
+PRETRAINED = bool(strtobool(config["MODEL"]["PRETRAINED"]))
+FINE_TUNE = bool(strtobool(config["MODEL"]["FINE_TUNE"]))
 num_epochs = int(config["MODEL_PARAMETERS"]["NUM_EPOCHS"])
 batch_size = int(config["IMG_PARAMETERS"]["BATCH_SIZE"])
 learning_rate = float(config["MODEL_PARAMETERS"]["LEARNING_RATE"])
@@ -63,7 +68,8 @@ train_dataloader, test_dataloader, class_names = prepare_dataloaders(data_path=d
                                                                      seed=seed)
 
 # -------------------- MODEL -------------------- #
-model = create_resnet50_painter_model(num_classes=len(class_names)).to(device)
+model = create_painter_model(model_name=model_name,
+                                      num_classes=len(class_names)).to(device)
 
 # -------------------- OPTIMIZER & LOSS -------------------- #
 loss_fn = torch.nn.CrossEntropyLoss()
@@ -91,5 +97,11 @@ train(model=model,
       early_stopping_patience=early_stopping_patience,
       scheduler_patience=schedular_patience)
 
+# -------------------- EVALUATION -------------------- #
+evaluate_and_log(model=model,
+                 dataloader=test_dataloader,
+                 class_names=class_names,
+                 device=device,
+                 model_save_path=model_save_path)
 
 wandb.finish()
